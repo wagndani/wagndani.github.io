@@ -16,35 +16,103 @@
 <body>
     <h1>
         <div class="container-fluid">
+            <div class="titlePageBlock">
             <div class="row">
-                <div class="col-md-3">
-                    <a href="http://www.azquotes.com/quote/1058240" title="Gifford Pinchot quote"><img src="http://www.azquotes.com/picture-quotes/quote-conservation-means-the-wise-use-of-the-earth-and-its-resources-for-the-lasting-good-gifford-pinchot-105-82-40.jpg" alt="Conservation means the wise use of the earth and its resources for the lasting good of men - Gifford Pinchot" style="max-width:100%"></a>
-                </div>
+                    <div class="col-md-2">
+                    <blockquote>Conservation means the wise use of the earth and its resources for the lasting good.
+                    <footer>Gifford Pinchot</footer></blockquote>
+                    </div>
             
-                   <div class="col-md-6"><span class="titlePage">The Recreation Information Database - RIDB</br>
+                   <div class="col-md-8"><span class="titlePage">The Recreation Information Database - RIDB</br>
                    An API Tutorial</span>
-                </div>
+                    </div>
             
-                <div class="col-md-3">
-                <a href="http://www.azquotes.com/quote/173103" title="Aldo Leopold quote"><img align="right" src="http://www.azquotes.com/picture-quotes/quote-conservation-is-a-state-of-harmony-between-men-and-land-aldo-leopold-17-31-03.jpg" alt="Conservation is a state of harmony between men and land. - Aldo Leopold" style="max-width:100%"></a>
+                    <div class="col-md-2">
+                        <blockquote>Between every two pine trees there is a door leading to a new way of life.<footer>John Muir</footer></blockquote>
+                    </div>
                 </div>
             </div>
         </div>
     </h1>
+    
+    <div class="container-fluid">
 
-    <h2>The Recreation Information Database - RIDB</h2>
-    <p>The Recreation Information Database (RIDB) provides users with a vast resource of information regarding recreational opportunities, across numerous Federal land management agencies, as well as state parks.  Information is able to be queried by state, activity, managment agency.</p>
+        <h2>The Recreation Information Database - RIDB</h2>
+            <p>The Recreation Information Database (RIDB) provides users with a vast resource of information regarding recreational opportunities, across numerous Federal land management agencies, as well as state parks.  Information is able to be queried by state, activity, management agency.</p>
     
-    <p><a href="https://ridb.recreation.gov">RIBD.RECREATION.GOV</a> has provided a RESTful API to allow developers to access this wealth of information.  The possibilitiies are seemingly endless.  A rental cabin agency in the Smoky Mountains can use this information within their own websites to provide potential vacation renters with nearby site seeing opportunities.  A bait shop could identify nearby public fishing locations.  Outdoor adventure suppliers can provide potential clients with information on local camping, hiking or canoeing opportunities.  A local Tourism Development Council can use the information in efforts to attract more visitors to their cities.  A travel guide can use the data to find handicap accessible campsites for disabled clients, for find all the historical tours that leave at specific times or date ranges.  Mountain bike groups can deterime with trails allow mounitan bike usage, as well as the width, length, and surface type of those trails.  Without a question, the enterprising developer can do a great deal with this data.</p>
+            <p><a href="https://ridb.recreation.gov">RIBD.RECREATION.GOV</a> has provided a RESTful API to allow the general public the opportunity to access this nationwide wealth of information.  The possibilitiies are seemingly endless.  A rental cabin agency in the Smoky Mountains can use this information within their own websites to provide potential vacation renters with nearby site seeing opportunities.  A bait shop could identify nearby public fishing locations.  Outdoor adventure suppliers can provide potential clients with information on local camping, hiking or canoeing opportunities.  A local Tourism Development Council can use the information in efforts to attract more visitors to their cities.  A travel guide can use the data to find handicap accessible campsites for disabled clients, for find all the historical tours that leave at specific times or date ranges.  Mountain bike groups can deterime with trails allow mounitan bike usage, as well as the width, length, and surface type of those trails.  Without a question, the enterprising developer can do a great deal with this data.</p>
    
-    <h2>RESTful API</h2>
-    <p>A RESTful API is an Aplication Program Interface (API) that uses representational state transer (REST) protocols to utilize HTML requests to GET, PUT, POST, and DELETE data.  GET requests are generally provided in a Javascript Object Notation (JSON) format or extensible Markup Language (XML).  These requests can then be process to taylor to a specifc need.  In short, RESTFUL APIs allow programmers to retrieve and process information, from other servers, to use and display within their own websites or applications. </p>
+        <h2>RESTful API</h2>
+            <p>A RESTful API is an Aplication Program Interface (API) that uses representational state transer (REST) protocols to utilize HTML requests to GET, PUT, POST, and DELETE data.  GET requests are generally responded in a Javascript Object Notation (JSON) format or extensible Markup Language (XML).  These requests can then be process to taylor to a specifc need.  In short, RESTFUL APIs allow programmers to retrieve and process information, from other servers, to use and display within their own websites or applications. </p>
     
-    <h2>Let's Get Started!</h2>
-    <p></p>
+        <h2>Let's get started!</h2>
+            <p><a href="http://usda.github.io/RIDB/">RIDB</a> proivdes a pretty solid base for getting started with their API. Information about endpoints, obtaining API keys for authentication, and information about available data formats are prominatly displayed. Just about any API out there will require users to sign up to obtain a 'key' to access the database, the RIDB is no different.  Keys are free, and immediately available by clicking the <a href="https://ridb.recreation.gov/?action=register">RIDB key link.</a>  From there it is a simple form: name, email, username and password and you get a key id to pass to the endpoint API calls. <img src="completedImages/testingFillForm.png" alt="API SIgn Up Form" title="No robots allowed.  Small woodland creatures, OK." style='display:block; margin-left: auto; margin-right:auto'></p>
+        
+        <h2> You've got the key, now what...</h2>    
+            <p>If we look at the <a href="http://usda.github.io/RIDB/">RIDB Documentation</a> a little further down the page we find the first provided example of the type of request we can initiate to obtain the list of <a href="http://usda.github.io/RIDB/#Organizations">Organizations</a> who participate in the RIDB. </p>
+            
+            <p>The documentation tells us in order to pull the list of organizations, we issue the request: <code>GET https://ridb.recreation.gov/api/v1/organizations/</code>.  </br>
+            Of course we will need to include our API key, and the code then becomes: 
+            <code>GET https://ridb.recreation.gov/api/v1/organizations/?apikey=INSERT_YOUR_KEY</code> </p>
+
+            <p>Type the URL directly into a browser address bar, and you get something that looks similar to:</p>
+            <p><img src="completedImages/rawOrgReturn.png" alt="Example of raw data" title="Example of Raw Organization Data"></p>
+        
+            <p>This is only a partial representation of the entire data set.  A first glance it may be a terrifing list of information.  However, we have the tools necessary to make this into something useful. Using the example information from the CS290 Module 6 Lectures, if we create a <code>new HMLHttpRequst();</code> in JavaScript, we can parse this data into a JavaScript object.</p>
+
+        <h3>Asyncronous XMLHttpRequest();</h3>
+            <p>The following code will preform an aysnocronous GET request and output the result to the console:</p>
+            <p>
+<pre>var organizationRequest = new XMLHttpRequest();
+organizationRequest.open('GET', 'https://ridb.recreation.gov/api/v1/organizations/?apikey=YOUR_KEY', true);
+organizationRequest.addEventListener('load', function(){
+    if (organizationRequest.status &gt;=200 &amp;&amp; organizationRequest.status &lt;= 400){
+        console.log(JSON.parse(organizationRequest.responseText));
+    }
+    else {
+        console.log("Error in network request: " + organizationRequest.statusText);
+    ;}
+;});
+
+organizationRequest.send(null);</pre></p>
+
+        <p>The above code will produce the following in the console window. </p>
+
+        <p><img src="completedImages/ParseOrgJSON.png" alt="Parsed returned Organization data" title="Console window output of API response"></p>
+
+        <p>As you can see, it is begining to look like something we can work with.  But before we go any further, lets pause to understand what is going on in the JavaScript that produced this output. </p>
+
+        <h4>Explaining the request</h4>
     
-    
-    
-    
+            <p>We will start at the top. <code>var organizationRequest = new XMLHttpRequest();</code>
+            This assigns a new function object to a variable called organizationRequest.  Yes, a function object.  More information on that concept can be found on <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">MDN.</a></p>
+
+            <p>The next line: <code>organizationRequest.open('GET', 'https://ridb.recreation.gov/api/v1/organizations/?apikey=YOUR_KEY', true);</code> opens the request with three variables.  The first variable describes the type of request, in this case it is a "GET" request.  The other most common HTTP request type is "POST".  More on the difference between these two types can be found at <a href="https://www.w3schools.com/tags/ref_httpmethods.asp">w3schools.com</a> The second variable is the URL that will be receiving the request, with your unique API key appended to the end.  The third variable, declares if the function will be synchronous (false) and will pause and wait for a response from the request server, or asynchronous (true) when the prograom will continue to work on other issues until it get a signal from the server. </p>
+
+            <p>The line <code>organizationRequest.addEventListener('load', function(){</code> is really what takes advantage of the asychronous nature of the request.  This will add an event listener to the organization request that listens for the server response and initites the internal body when the 'load' event triggers.  This <code>addEventListener()</code> function is also being passed another variable, in this   case, an anonymous function, that describles what will occur once the 'load' event happens.</p>  
+            
+            <p>Within the anonymous function we passed to the event listener, we have:<pre>
+if (organizationRequest.status &gt;=200 &amp;&amp; organizationRequest.status &lt; 400){
+        console.log(JSON.parse(organizationRequest.responseText));   
+}
+
+ else {
+        console.log("Error in network request: " + organizationRequest.statusText);
+}</pre>  
+            This is a logic statement that define what to do in the condition the status respone is between 200 and 400, that is the request was successful.  In the event of a sucessful request the response JSON (JavaScript Object Notation) string will be parsed into a JavaScript object, which will be displayed in the console window.  If the request failed, an error message will be displayed.</p>
+
+            <p>Finally we come to the line: <code>organizationRequest.send(null);</code>  This actually sends our <code>GET</code> request to the server.  We pass in <cod>null</cod> to indicate we have no further information to provide.  If this were a <code>POST</code> request, this is where we would pass our information to the POST.</p>
+
+            <p>Now that we have a bit of background on the process, let actually create an object variable to hold our object we create when the JSON response is parsed.  Within the conditional <code>if</code> statement, we can change the code: <code>console.log(JSON.parse(organizationRequest.responseText));</code> to <code>var organizationData = JSON.parse(organizationRequest.responseText);</code> and now we have an something we can start doing some actual work with.</p>
+
+            <p>From this point forward, we are going to run through some hypothetical scenerios and see what kinds of problems we can solve from the use of the data obtainable through RIDB</p>
+
+            <button id="indexToNextPage" href="page2.html" style='margin-left:auto'>Continue > > ></button>
+            </br>
+            </br>
+            </br>
+    </div> 
+    <script>src='RIDB_buttonControls.js'</script>
+    <!--<script src="RIDBjavaScript.js"></script> -->
 </body>
 </html>

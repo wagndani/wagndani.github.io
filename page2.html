@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang = "en-us">
+<head>
+<title>Coming Soon</title>
+<meta charset="utf-8" >
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
+<link rel="stylesheet" href="APIhowtoStyles.css" >
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+</head>
+
+<body>
+    <h1>
+        <div class="container-fluid">
+            <div class="titlePageBlock">
+            <div class="row">
+                    <div class="col-md-2">
+                    <blockquote>When we see land as a community to which we belong, we may begin to use it with love and respect.
+                    <footer>Aldo Leopold</footer></blockquote>
+                    </div>
+
+                   <div class="col-md-8"><span class="titlePage">The Recreation Information Database - RIDB</br>
+                   An API Tutorial</span>
+                    </div>
+
+                    <div class="col-md-2">
+                        <blockquote>Study nature, love nature, stay close to nature. It will never fail you.<footer>Frank Lloyd Wright</footer></blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </h1>
+
+    <div class="container-fluid">
+        <h2>Georgia On My Mind</h2>
+
+        <p>North Georgia specifically.  One of my favorite places to go within a few hours drive of home is the mountains and hills of northern Georgia in the fall.  There is a popular pumpkin patch just outside of Dawsonville, GA we have made a tradition to visit annually.  So, lets see what we can find nearby...</p>
+
+        <p>I'll start by entering Dawonsonville, GA into <a href="https://www.google.com/maps/place/Dawsonville,+GA+30534/@34.4301817,-84.1290074,14z/data=!3m1!4b1!4m5!3m4!1s0x885f7cdcdd2ba817:0x96cb0430ad709640!8m2!3d34.4210713!4d-84.1192245">Google Maps.</a>  If I take a look at the pane that pops up on the left side of the page, and the address bar, I have information for the zip code, latitude and longitude for Dawsonville, GA.  Now, looking back at the documentation for the RIDB under <a href="http://usda.github.io/RIDB/#Get All Recreation Areas">"Get All Recreation Areas"</a> we find a listing of available "URL Parameters".  We can use these parameters to filter through all the records in the RIDB to those which are specific to our needs.  If I were interested in retriving records near a specific location, I can see that the "latitude", "longitude", and "radius" parameters will fit the purpose. </p>
+
+        <P>I'll start by creating an object populated with the data I found on Google Maps for Dawsonville, and a variable to hold the distance (miles) I am willing to search: <pre>
+        var Dawsonville = {
+            latitude:34.43018,
+            longitude:-84.12900,
+            zipCode:30534,
+            state:"Georgia",
+            stateAbbrev:"GA"
+        }
+
+        var distance = 50;          /*50 miles being the max distance I can travel without complaints from the back seat*/</pre></p>
+
+        <p>Now, modify the request from the organization pull from the previous page, using the latitude, longitude, and radius parameters by appending them into the URL with the ampersand (&amp;):<pre>
+        req.open('GET', 'https://ridb.recreation.gov/api/v1/recareas/?latitude=' + Dawsonville.latitude + "&longitude=" + Dawsonville.longitude + "&radius=" + distance + "&" + MyapiKey , true);</pre></p>
+
+        <p>Looking through the return, You may notice a few attributes of particular interest: <code>RecAreaName:</code>, <code>RecAreDescription:</code>, <code>RecAreaDirections:</code>, <code>keywords:</code>, and <code>RecAreaPhone:</code> all look to be good resource information.  Lets do something with it.</p>
+
+        <h3>Adding the information to a website</h3>
+        <p>We have seen how to create a <code>GET</code> request and how to store the response in a variable, let's review: <pre>
+
+/*Create an object of our target location*/
+    var Dawsonville = {
+        latitude:34.43018,
+        longitude:-84.12900,
+        zipCode:30534,
+        state:"Georgia",
+        stateAbbrev:"GA"
+        }
+
+/*Create a variable to store a specific distance from our target location*/
+    var distance = 50;
+
+/*Create the request*/
+    var recAreaRequest = new XMLHttpRequest();
+
+/*Define the query*/
+    recAreaRequest.open('GET', 'https://ridb.recreation.gov/api/v1/recareas/?latitude=' + Dawsonville.latitude + "&amp;longitude=" + Dawsonville.longitude + "&amp;radius=" + distance + "&amp;" + MyapiKey , true);
+
+/*add an event listener and output object information to the console window*/
+    recAreaRequest.addEventListener('load', function(){
+        if (recAreaRequest.status &gt;= 200 &amp;&amp; recAreaRequest.status &lt; 400){
+            var dataCollected = JSON.parse(recAreaRequest.responseText);
+            var targetObjects = dataCollected.RECDATA;
+            console.log(targetObjects);
+        }
+
+        else {
+            console.log("Error in network request: " + recAreaRequest.statusText);
+        }
+    ;}
+
+    recAreaRequest.send(null);</pre>
+    </p>
+
+    <p>This will output the object array of recreation areas to the console.</p>
+    <img src="completedImages/recAreaConsoleOut.png">
+    <p>Now, let's modify the code to output this data to the browser, but before we do, we need to define a few more concepts.</p>
+
+    <p><code>var _someName = document.createElement("HTMLelement");</code> This will create a new HTML element of the defined type (ie. <code>("div")</code> will create a <code>&lt;div&gt;</code>) and assign it to the variable <code>_someName</code>.</p>
+
+    <p>The text within that new element can be created by calling <code>_someName.textContent = "Here is some text";</code> or if the JSON parsed string contains HTML tags within its body, then <code>_someName.innerHTML = "&lt;strong&gt;This text will be bold &lt;/strong&gt;"</code></p>
+
+    <p>To assign an elements text with the contents of an object instead of hardcoded strings, simply use the dot notation followed by the property name to access the description.  For example using the Dawsonville object above the assignment <code>_someName.textContent = Dawsonville.State</code> will assign the string <code>Georgia</code> to the text content of <code>_someName</code>.</p>
+
+    <p>Now that we have created an element with something to display, we add it to the HTML document by appending the new element to some existing HTML element.  You can append the new element into the <code>&lt;body&gt;</code> by using <code>document.body.appendChild(_someName);</code>.  Or if you have a specific place you need the element to be placed and you have another tag with a unique id you can use <code>document.getElementByID('elementID').appendChild(_someName);</code>.  For example, you may have a tag with a id as such: <code>&lt;div id='put_someNameHere&gt;</code> and you can access it by calling <code>document.getElementById('put_someNameHere').appendChild(_someName);</code></p>
+
+    <p>Let's add one final building block before we do anything amazing.  Let's talk about <code>arrayName.forEach();</code>  JavaScript contains a built in method for array called <code>forEach();</code>.  This will allow you to pass in a function and do some action to each element of an array.  Similar to a <code>for</code> loop.  The two functions below are equalivant</p>
+
+    <pre>
+    var CityList = [
+    {name: "Dawsonville",
+    activity: "pumpkin patch",
+    priority: 1},
+    {name: "Ellijay",
+    activity: "apple orchard",
+    priority: 2},
+    {name: "Blue Ridge",
+    activity: "hiking",
+    priority: 3}
+    ];
+
+    for (var i = 0; i &lt;CityList.length; i++){
+        console.log(CityList[i].activity);
+    }
+
+    CityList.forEach(function (element){
+        console.log(element.activity);
+    });
+
+    /*Console output of both will be the same.
+    pumpkin patch
+    apple orchard
+    hiking
+    </pre>
+
+    <p>Now we are finally ready to do something productive with our information we recieved from RIDB.  Going back to our Object we created from our JSON return from the RIDB response, we see that we are dealing with an array of objects, and each object contains keys (property attributes) for the area name, description, directions, and phone number.  Let's use this information to autogenerate a webpage for rec areas within 50 miles of Dawsonville, GA.</p>
+
+    <pre>
+    var Dawsonville = {
+        latitude:34.43018,
+        longitude:-84.12900,
+        zipCode:30534,
+        state:"Georgia",
+        stateAbbrev:"GA"
+    }
+
+var distance = 50;
+
+
+    var req = new XMLHttpRequest();
+
+        req.open('GET', 'https://ridb.recreation.gov/api/v1/recareas/?latitude=' + Dawsonville.latitude + "&amp;longitude=" + Dawsonville.longitude + "&amp;radius=" + distance + "&amp;" + MyapiKey , true);
+                req.addEventListener('load', function(){
+                    if (req.status &gt;= 200 &amp;&amp; req.status &lt; 400){
+                        var dataCollected = JSON.parse(req.responseText);
+                        var targetObjects = dataCollected.RECDATA;
+                        console.log(targetObjects);
+
+                  /*The following code with create a div for each object in the retured array.
+                  Each div will contain a h3 header for the area name, a block for the rec area
+                  description, a block for directions to the rec area, and a contact phone number.
+                  The div for each area (oject) will then be added to the HTML body*/
+
+                  targetObjects.forEach(function(element){
+                        var newRecOpp = document.createElement("div");
+
+                        var newRecOppHeader = document.createElement("h3");
+                            newRecOppHeader.textContent = element.RecAreaName;
+                            newRecOpp.appendChild(newRecOppHeader);
+                            newRecOpp.style.border = 'solid';
+
+                        var aboutArea = document.createElement("h4");
+                            aboutArea.textContent = "About Area:";
+                            var aboutAreaText = document.createElement("p");
+                            aboutAreaText.innerHTML = element.RecAreaDescription;
+                            newRecOpp.appendChild(aboutArea);
+                            newRecOpp.appendChild(aboutAreaText);
+
+
+                        var directions = document.createElement("h4");
+                            directions.textContent = "Directions:";
+                            var directionsText = document.createElement("p");
+                            directionsText.textContent = element.RecAreaDirections;
+                            newRecOpp.appendChild(directions);
+                            newRecOpp.appendChild(directionsText);
+
+
+                        var contactInfo = document.createElement("h4");
+                            contactInfo.textContent = "Contact:";
+                            var contactText = document.createElement("p");
+                            contactText.textContent = element.RecAreaPhone;
+                            newRecOpp.appendChild(contactInfo);
+                            newRecOpp.appendChild(contactText);
+
+
+                        document.body.appendChild(newRecOpp);
+});
+                    }
+
+                    else {
+                        console.log("Error in network request: " + req.statusText);
+                    }
+
+                ;})
+
+        req.send(null);
+
+    </pre>
+
+    </div>
+
+    <div class='container-fluid'>
+
+
+
+
+    <h2>The result</h2>
+    <p>Congratulations! This is what the result looks like!</p>
+
+    <div style="border:solid">
+        <h3>Allatoona Lake</h3>
+            <h4>About Area:</h4>
+                <p>Allatoona Lake is one of the most frequently visited U.S. Army Corps of Engineers lakes in the nation. Located only 30 miles from Atlanta, more than 6 million visitors each year enjoy picnicking,  camping, hunting, fishing, swimming and other water sports, and observing the abundant wildlife along the shores of this beautiful lake. The visitor center features video exhibits and displays about the area's history, ranging from the time of early Indians to the gold mining and iron making days, from Civil War up to the present.</p>
+
+            <h4>Directions:</h4>
+                <p>From Atlanta, 45 miles north on I-75 to Exit 290, east on GA 20, south on GA 20 Spur to the dam and visitor center.</p>
+
+            <h4>Contact:</h4>
+                <p>(678) 721-6700</p>
+    </div>
+
+    <div style="border:solid">
+        <h3>Lake Sidney Lanier</h3>
+            <h4>About Area:</h4>
+                <p>Nestled in the foothills of the Georgia Blue Ridge Mountains lies Lake Sidney Lanier, one of America?s favorite lakes. Over 7.5 million people a year choose to visit Lanier. Seventy-six recreational areas have been developed around the lake under the direction of the Corps of Engineers. These include 46 parks operated directly by the Corps, 10 marinas, and Lake Lanier Islands. The remaining areas are leased to county and city governments or other organizations such as the Boy Scouts. With over 692 miles of shoreline, the lake is well known for its aqua-blue colored water, spectacular scenery and variety of recreational activities. Constructed by the U.S. Army Corps of Engineers in the 1950?s,  Lake Lanier is a multi-purpose lake that provides for flood protection, power production, water supply, navigation, recreation and fish and wildlife management. Lake Lanier is one of 464 lakes in 43 states constructed and operated by the U. S. Army Corps of Engineers. It has won the best operated lake of the year award in 1990, 1997 and 2002.</p>
+
+            <h4>Directions:</h4>
+                <p>From I-985/Buford Take GA Hwy 20 West, from GA 400/Cumming, take Ga Hwy 20 East, to North on Suwanee Dam Road. Go three miles and go left on Buford Dam Road. The Visitor Center is one mile down on the right.</p>
+
+                <h4>Contact:</h4>
+                    <p>(770) 945-9531</p>
+    </div>
+
+    <div style="border:solid">
+        <h3>Carters Lake</h3>
+            <h4>About Area:</h4>
+                <p>Carters Lake Project is managed by the U.S. Army Corps of Engineers, Mobile District. Carters Lake is one of the most scenic lakes in the Southeast. Located at the southern end of the Blue Ridge Mountains, its sparkling waters and rugged shoreline provide a beautiful surrounding for a variety of recreational opportunities which includes: camping, picnicking, boating, fishing, and hunting.</p>
+
+            <h4>Directions:</h4>
+                <p>From North East Atlanta; I-575 North to Carters Lake Exit. Follow signs to desired project   locations. From North Atlanta; I-75 North to Exit 293 then Right on Hwy 136. Follow signs to desired project locations. From Chattanooga TN. I-75 South to Exit 336.</p>
+
+            <h4>Contact:</h4>
+                <p>(706) 334-2248</p>
+    </div>
+
+    <div style="border:solid">
+        <h3>Chattahoochee-Oconee National Forests</h3>
+            <h4>About Area:</h4>
+                <p><p><strong>Frequently Asked Questions </strong>- Got questions about the forest? Please take a look here before you pick up the phone. You'll probably <a href="https://www.fs.usda.gov/detailfull/conf/?cid=STELPRDB5246600&amp;width=full">find the answer to your question</a>.</p>
+
+                <p><br>
+                <strong>Wilderness - </strong>10&nbsp;<a href="http://www.fs.usda.gov/detailfull/conf/landmanagement/resourcemanagement/?cid=fsm9_029305&amp;width=full">wilderness areas</a>; over 100,000 acres of solitude!&nbsp;</p>
+
+                <p>&nbsp;</p>
+
+                <p><strong>Be Safe </strong>- From&nbsp;fly fishing to backpacking to OHV riding your adventure awaits on the national forest. But the best adventures are safe adventures so checkout&nbsp;<a href="http://www.fs.usda.gov/detailfull/r8/home/?cid=fsbdev3_066386&amp;width=full">Outdoor Safety in the South</a>&nbsp;before planning your trip. Always remember, your safety is your responsibility.</p>
+
+            <h4>Directions:</h4>
+                <p></p>
+            <h4>Contact:</h4>
+                <p></p>
+    </div>
+
+
+    <div style="border:solid">
+        <h3>Chattahoochee River National Recreation Area</h3>
+            <h4>About Area:</h4>
+                <p>Today the river valley attracts us for so many reasons. Take a solitary walk to enjoy nature’s display, raft leisurely through the rocky shoals with friends, fish the misty waters as the sun comes up, or have a picnic on a Sunday afternoon. Get Outdoors and experience your Chattahoochee River National Recreation Area as you have never done before.</p>
+
+        <h4>Directions:</h4>
+            <p>To find the Island Ford Visitor Center enter the physical address listed above into your GPS unit or your favorite map software.</p>
+
+        <h4>Contact:</h4><p>(678) 538-1200</p>
+    </div>
+
+
+
+
+
+    <div style="border:solid">
+        <h3>Kennesaw Mountain National Battlefield Park</h3>
+            <h4>About Area:</h4>
+                <p>Kennesaw Mountain National Battlefield Park is a 2,965 acre National Battlefield that preserves a Civil War battleground of the Atlanta Campaign. Opposing forces maneuvered and fought here from June 19, 1864 until July 2, 1864. Although most famous as a Civil War battlefield, Kennesaw Mountain has a much richer story.</p>
+
+            <h4>Directions:</h4>
+                <p>Take exit 269 (Barrett Parkway). At the stoplight head west onto Barrett Parkway.
+                    Follow Barrett Parkway for approximately 3 miles, turn left at the light, onto Old Hwy 41.
+                    Turn right at your next light, Stilesboro Rd.
+                    The visitor center will be immediately on your left (brown and white signs located along the roads will guide you as well).</p>
+
+            <h4>Contact:</h4>
+                <p>(770) 427-4686</p>
+    </div>
+
+
+    <div style="border:solid">
+        <h3>Martin Luther King Jr National Historic Site</h3>
+            <h4>About Area:</h4>
+                <p>A young boy grows up in a time of segregation…A dreamer is moved by destiny into leadership of the modern civil rights movement…This was Martin Luther King, Jr.  Come hear his story, visit the home of his birth, and where he played as a child.  Walk in his footsteps, and hear his voice in the church where he moved hearts and minds.  Marvel at how he was an instrument for social change.</p>
+
+            <h4>Directions:</h4>
+                <p>The park is accessible via public transportation and by car.</p>
+
+            <h4>Contact:</h4>
+                <p>(404) 331-5190</p>
+        </div>
+    </div>
+
+   <!-- <script src='RIDB_buttonControls.js'></script> -->
+
+</body>
+</html>
