@@ -8,7 +8,7 @@ span.titlePage {
 }
 
 div.titlePageBlock {
-    background-image: url(completedImages/banner.jpg);
+    background-image: url(/completedImages/banner.jpg);
     background-repeat: no-repeat;
     background-size: cover;
 }
