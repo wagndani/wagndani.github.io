@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang = "en-us">
 <head>
-<title>The RIDB: A 'How-To'</title>
+<title>Coming Soon</title>
 <meta charset="utf-8" >
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
@@ -18,10 +18,10 @@
         <div class="container-fluid">
             <div class="page-header text-center">
             <div class="row">
-                <div class="col-md-2">
+                    <div class="col-md-2">
                     <blockquote>When we see land as a community to which we belong, we may begin to use it with love and respect.
                     <footer>Aldo Leopold</footer></blockquote>
-                </div>
+                    </div>
 
                    <div class="col-md-8"><span class="titlePage">The Recreation Information Database - RIDB</br>
                    An API Tutorial</span>
@@ -40,7 +40,7 @@
 
         <p>North Georgia specifically.  One of my favorite places to go within a few hours drive of home is the mountains and hills of northern Georgia in the fall.  There is a popular pumpkin patch just outside of Dawsonville, GA we have made a tradition to visit annually.  So, lets see what we can find nearby...</p>
 
-        <p>I'll start by entering Dawonsonville, GA into <a href="https://www.google.com/maps/place/Dawsonville,+GA+30534/@34.4301817,-84.1290074,14z/data=!3m1!4b1!4m5!3m4!1s0x885f7cdcdd2ba817:0x96cb0430ad709640!8m2!3d34.4210713!4d-84.1192245">Google Maps.</a>  If I take a look at the pane that pops up on the left side of the page, and the address bar, I have information for the zip code, latitude and longitude for Dawsonville, GA.  Now, looking back at the documentation for the RIDB under <a href="http://usda.github.io/RIDB/#Get All Recreation Areas">"Get All Recreation Areas"</a> we find a listing of available "URL Parameters".  We can use these parameters to filter through all the records in the RIDB to those which are specific to our needs.  If I were interested in retrieving records near a specific location, I can see that the "latitude", "longitude", and "radius" parameters will fit the purpose. </p>
+        <p>I'll start by entering Dawonsonville, GA into <a href="https://www.google.com/maps/place/Dawsonville,+GA+30534/@34.4301817,-84.1290074,14z/data=!3m1!4b1!4m5!3m4!1s0x885f7cdcdd2ba817:0x96cb0430ad709640!8m2!3d34.4210713!4d-84.1192245">Google Maps.</a>  If I take a look at the pane that pops up on the left side of the page, and the address bar, I have information for the zip code, latitude and longitude for Dawsonville, GA.  Now, looking back at the documentation for the RIDB under <a href="http://usda.github.io/RIDB/#Get All Recreation Areas">"Get All Recreation Areas"</a> we find a listing of available "URL Parameters".  We can use these parameters to filter through all the records in the RIDB to those which are specific to our needs.  If I were interested in retriving records near a specific location, I can see that the "latitude", "longitude", and "radius" parameters will fit the purpose. </p>
 
         <P>I'll start by creating an object populated with the data I found on Google Maps for Dawsonville, and a variable to hold the distance (miles) I am willing to search: <pre>
         var Dawsonville = {
@@ -59,8 +59,85 @@
         <p>Looking through the return, You may notice a few attributes of particular interest: <code>RecAreaName:</code>, <code>RecAreDescription:</code>, <code>RecAreaDirections:</code>, <code>keywords:</code>, and <code>RecAreaPhone:</code> all look to be good resource information.  Lets do something with it.</p>
 
         <h3>Adding the information to a website</h3>
+        <p>We have seen how to create a <code>GET</code> request and how to store the response in a variable, let's review: <pre>
 
-        <p>We are now going to generate multiple 'blocks' of recreation area data, one for each recreation are within 50 miles of Dawsonville, Georgia.  Each 'block' will contain the name of a recreation area as a header, an about section, directions to the area, and contact information.  Here we go.</p>
+/*Create an object of our target location*/
+    var Dawsonville = {
+        latitude:34.43018,
+        longitude:-84.12900,
+        zipCode:30534,
+        state:"Georgia",
+        stateAbbrev:"GA"
+        }
+
+/*Create a variable to store a specific distance from our target location*/
+    var distance = 50;
+
+/*Create the request*/
+    var recAreaRequest = new XMLHttpRequest();
+
+/*Define the query*/
+    recAreaRequest.open('GET', 'https://ridb.recreation.gov/api/v1/recareas/?latitude=' + Dawsonville.latitude + "&amp;longitude=" + Dawsonville.longitude + "&amp;radius=" + distance + "&amp;" + MyapiKey , true);
+
+/*add an event listener and output object information to the console window*/
+    recAreaRequest.addEventListener('load', function(){
+        if (recAreaRequest.status &gt;= 200 &amp;&amp; recAreaRequest.status &lt; 400){
+            var dataCollected = JSON.parse(recAreaRequest.responseText);
+            var targetObjects = dataCollected.RECDATA;
+            console.log(targetObjects);
+        }
+
+        else {
+            console.log("Error in network request: " + recAreaRequest.statusText);
+        }
+    ;}
+
+    recAreaRequest.send(null);</pre>
+    </p>
+
+    <p>This will output the object array of recreation areas to the console.</p>
+    <img src="completedImages/recAreaConsoleOut.png">
+    <p>Now, let's modify the code to output this data to the browser, but before we do, we need to define a few more concepts.</p>
+
+    <p><code>var _someName = document.createElement("HTMLelement");</code> This will create a new HTML element of the defined type (ie. <code>("div")</code> will create a <code>&lt;div&gt;</code>) and assign it to the variable <code>_someName</code>.</p>
+
+    <p>The text within that new element can be created by calling <code>_someName.textContent = "Here is some text";</code> or if the JSON parsed string contains HTML tags within its body, then <code>_someName.innerHTML = "&lt;strong&gt;This text will be bold &lt;/strong&gt;"</code></p>
+
+    <p>To assign an elements text with the contents of an object instead of hardcoded strings, simply use the dot notation followed by the property name to access the description.  For example using the Dawsonville object above the assignment <code>_someName.textContent = Dawsonville.State</code> will assign the string <code>Georgia</code> to the text content of <code>_someName</code>.</p>
+
+    <p>Now that we have created an element with something to display, we add it to the HTML document by appending the new element to some existing HTML element.  You can append the new element into the <code>&lt;body&gt;</code> by using <code>document.body.appendChild(_someName);</code>.  Or if you have a specific place you need the element to be placed and you have another tag with a unique id you can use <code>document.getElementByID('elementID').appendChild(_someName);</code>.  For example, you may have a tag with a id as such: <code>&lt;div id='put_someNameHere&gt;</code> and you can access it by calling <code>document.getElementById('put_someNameHere').appendChild(_someName);</code></p>
+
+    <p>Let's add one final building block before we do anything amazing.  Let's talk about <code>arrayName.forEach();</code>  JavaScript contains a built in method for array called <code>forEach();</code>.  This will allow you to pass in a function and do some action to each element of an array.  Similar to a <code>for</code> loop.  The two functions below are equalivant</p>
+
+    <pre>
+    var CityList = [
+    {name: "Dawsonville",
+    activity: "pumpkin patch",
+    priority: 1},
+    {name: "Ellijay",
+    activity: "apple orchard",
+    priority: 2},
+    {name: "Blue Ridge",
+    activity: "hiking",
+    priority: 3}
+    ];
+
+    for (var i = 0; i &lt;CityList.length; i++){
+        console.log(CityList[i].activity);
+    }
+
+    CityList.forEach(function (element){
+        console.log(element.activity);
+    });
+
+    /*Console output of both will be the same.
+    pumpkin patch
+    apple orchard
+    hiking
+    */
+    </pre>
+
+    <p>Now we are finally ready to do something productive with our information we recieved from RIDB.  Going back to our Object we created from our JSON return from the RIDB response, we see that we are dealing with an array of objects, and each object contains keys (property attributes) for the area name, description, directions, and phone number.  Let's use this information to autogenerate a webpage for rec areas within 50 miles of Dawsonville, GA.</p>
 
     <pre>
     var Dawsonville = {
@@ -83,7 +160,7 @@ var distance = 50;
                         var targetObjects = dataCollected.RECDATA;
                         console.log(targetObjects);
 
-                  /*The following code with create a div for each object in the returned array.
+                  /*The following code with create a div for each object in the retured array.
                   Each div will contain a h3 header for the area name, a block for the rec area
                   description, a block for directions to the rec area, and a contact phone number.
                   The div for each area (oject) will then be added to the HTML body*/
@@ -250,9 +327,9 @@ var distance = 50;
 <div class="container">
     
     <h2>One more trick</h2>
-    <p>It should now be pretty easy to see how this information can be modified, styled and added to any page you wished.  Maybe for a vacation journal or maybe to highlight recreational opportunities near the cabin you are trying to rent out.</p>
+    <p>It should now be pretty easy to see how this information can be modified, styled and added to any page you wished.  Maybe for a vacation journal or maybe to highlight recreational opportunites near the cabin you are trying to rent out.</p>
     
-    <p>However, there is one more piece we can add to this to really make it interesting.  If we look further down the RIDB documentation, we see a request example for <a href="http://usda.github.io/RIDB/#Recreation Area Media">Recreation Area Media</a>.  This request returns URL endpoints for media associated with a particular recreation area, when given the recreation area unique ID number.  It just so happens that our recreation areas we built the above 'block' from, have these unique recreation area ID within their attributes. Let's modify our code to include any available pictures of the rec areas, by nesting another request into our code.</p>
+    <p>However, there is one more piece we can add to this to really make it interesting.  If we look further down the RIDB documentaion, we see a request example for <a href="http://usda.github.io/RIDB/#Recreation Area Media">Recreation Area Media</a>.  Let's modifiy our code to include any available pictures of the rec areas. </p>
     
     <pre>
     var req = new XMLHttpRequest();
@@ -264,7 +341,7 @@ var distance = 50;
                         var targetObjects = dataCollected.RECDATA;
                         console.log(targetObjects);
 
-                  /*The following code with create a div for each object in the returned array.
+                  /*The following code with create a div for each object in the retured array.
                   Each div will contain a h3 header for the area name, a block for the rec area
                   description, a block for directions to the rec area, and a contact phone number.
                   The div for each area (oject) will then be added to the HTML body*/
@@ -284,8 +361,7 @@ var distance = 50;
                         /*Create directions paragraph for rec area*/
                         /*... same code as before ...*/
                         
-                        /*!!!!!!!NEW STUFF HERE!!!!!!
-                        REQUEST AVAILABLE MEDIA FOR OUR REC SITE*/
+                        /*REQUEST MEDIA FOR OUR REC SITE*/
                 var mediaRequest = new XMLHttpRequest();
                     mediaRequest.open('GET', 'https://ridb.recreation.gov/api/v1/recareas/'+ element.RecAreaID + '/media/?' + MyapiKey, true);
                     
@@ -341,9 +417,7 @@ var distance = 50;
         </div>
     <hr>
     
-    <p>In the next section we will the data treasure trove of historical reservation data (sounds exciting!)</p>
-     <button id="pg2toIndex"><a href="index.html">&lt; &lt; &lt; Back</a></button>
-     <button id="pg2toPg3"><a href="page3.html">Continue &gt; &gt; &gt;</a></button>
+    <p>In the next section we will explore ........</p>
     </div>
 </br>
 </br>

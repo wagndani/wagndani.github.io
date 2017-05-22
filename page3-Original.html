@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang = "en-us">
+<head>
+<title>Coming Soon</title>
+<meta charset="utf-8" >
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
+<link rel="stylesheet" href="APIhowtoStyles.css" >
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+</head>
+
+<body>
+        <div class="container-fluid page-header text-center">
+            <div class="row">
+                    <div class="col-md-2">
+                    <blockquote>When we see land as a community to which we belong, we may begin to use it with love and respect.
+                    <footer>Aldo Leopold</footer></blockquote>
+                    </div>
+
+                   <div class="col-md-8"><span class="titlePage"><h1>The Recreation Information Database - RIDB</br>
+                   An API Tutorial</h1></span>
+                    </div>
+
+                    <div class="col-md-2">
+                        <blockquote>Study nature, love nature, stay close to nature. It will never fail you.<footer>Frank Lloyd Wright</footer></blockquote>
+                    </div>
+                </div>
+            
+        </div>
+
+    <div class="container">
+        <h2>A Path Through the Woods</h2>
+        <p>The RIDB includes trail information for both the US Forest Service and the Fish and Wildlife Service.  Looking through the data dictionary for the <a href='http://usda.github.io/RIDB/#Get All US Forest Service Trails'>US Forest Servic trail data</a> appears to be a highly promising data source.  Lets look at a few highlights:</p>
+        
+        <p>
+            <ul>Select Key USFS Trail Attribute
+            <li>Trail Type</li>
+            <li>Length</li>
+            <li>Accessibility Status</li>
+            <li>Surface Material</li>
+            <li>Grade</li>
+            <li>Allowed Use</li>
+            </ul>
+        The list could go on and on.  However, in the data dictionary, there is one indicator that maybe not all is well...  Much of the more descriptive attributes are apparently optional, that is the agency is not required to populate those fields.  Lets do a query for trails within 200 miles of my favorite fall getaway, Dawsonville, Georgia, and see what we can come up with.
+        </p>
+    <pre>
+    var req = new XMLHttpRequest();
+        
+        req.open('GET', 'https://ridb.recreation.gov/api/v1/trails/USFS/?latitude=' + Dawsonville.latitude + 
+            "&amp;longitude=" + Dawsonville.longitude + "&amp;radius=" + distance + "&amp;" + MyapiKey , true);
+                req.addEventListener('load', function(){
+                    if (req.status &gt;= 200 &amp;&amp; req.status &lt; 400){
+                        var dataCollected = JSON.parse(req.responseText);
+                        console.log(dataCollected);
+                    }
+
+                    else {
+                        console.log("Error in network request: " + req.statusText);
+                    }
+                ;})
+
+        req.send(null);
+    </pre>
+    
+    <h3>The Return:</h3>
+    
+    <pre>
+29:Object{
+	ATVAccptDisc:"N/A"
+	ATVManaged:"N/A"
+	ATVRestricted:"N/A"
+	AccessibilityStatus:""
+	AdminOrg:81202
+	AllowedSnowUse:"N/A"
+	AllowedTerraUse:"N/A"
+	Attributesubset:"TrailNFS_Basic"
+    BMP:0
+	BicycleAccptDisc:"N/A"
+	BicycleManaged:"N/A"
+	BicycleRestricted:"N/A"
+	EMP:0.56
+	FourwdAccptDisc:"N/A"
+	FourwdManaged:"N/A"
+	FourwdRestricted:"N/A"
+	GEOM:"LINESTRING (-83.188958559999946 34.882054492000066, ...
+    -83.195829323999988 34.879593087000046)"
+	GISMiles:0.552
+	HikerPedestrianAccptDisc:"N/A"
+	HikerPedestrianManaged:"N/A"
+	HikerPedestrianRestricted:"N/A"
+	LastUpdatedDate:"2017-04-25"
+	MVUMSymbol:99
+	ManagingOrg:81202
+	MinimumTrailWidth:""
+	MotorWatercraftAccptDisc:"N/A"
+	MotorWatercraftManaged:"N/A"
+	MotorWatercraftRestricted:""
+	MotorcycleAccptDisc:"N/A"
+	MotorcycleManaged:"N/A"
+	MotorcycleRestricted:"N/A"
+	NationalTrailDesignation:1
+	NonmotorWatercraftAccptDisc:"N/A"
+	NonmotorWatercraftManaged:"N/A"
+	NonmotorWatercraftRestricted:"N/A"
+	PackSaddleAccptDisc:"N/A"
+	PackSaddleManaged:"N/A"
+	PackSaddleRestricted:"N/A"
+	SecurityId:812
+	SegmentLength:0.56
+	ShapeLength:0.009293688341771212
+	SnowMotorized:"N/A"
+	SnowmobileAccptDisc:"N/A"
+	SnowmobileManaged:"N/A"
+	SnowmobileRestricted:"N/A"
+	SnowshoeAccptDisc:"N/A"
+	SnowshoeManaged:"N/A"
+	SnowshoeRestricted:"N/A"
+	SpecialMgmtArea:""
+	SurfaceFirmness:""
+	TerraBaseSymbology:"TC4-5"
+	TerraMotorized:"N/A"
+	TrailClass:4
+	TrailCn:1433182010602
+	TrailName:"ROCKY GAP HORSE TRAIL"
+	TrailNo:"321O"
+	TrailSurface:"NAT - NATIVE MATERIAL"
+	TrailType:"TERRA"
+	TrailUSFSID:5981
+	TypicalTrailGrade:"12-20%"
+	TypicalTreadCrossSlope:""
+	TypicalTreadWidth:"TW03 - 18-24 INCHES"
+	WaterMotorized:"N/A"
+	XcountrySkiAccptDisc:"N/A"
+    XcountrySkiManaged:"N/A"
+    XcountrySkiRestricted:"N/A"
+    }
+    </pre>
+    
+    <p>Here we see one of the potential pitfalls when working with data such as this.  There are a few useful populated attributes, trail width, surface, grade, but so many of the attributes are completely unpopulated.  Out of 66 possible attribute pairs, only 23 have any data what so ever (~34%).  Trying this with Asheville NC, Portland OR,
+    and St. Marks FL, yielded similar results.  Sometimes the data just isn't there.  Perhaps if we modify the code to query trails managed by the Fish and Wildlife Service we might have better results:</p>
+    
+    <pre>
+    var req = new XMLHttpRequest();
+        
+        req.open('GET', 'https://ridb.recreation.gov/api/v1/trails/FWS/?latitude=' + StMarks.latitude +
+            "&amp;longitude=" + StMarks.longitude + "&amp;radius=" + distance + "&amp;" + MyapiKey , true);
+                req.addEventListener('load', function(){
+                    if (req.status &gt;= 200 &amp;&amp; req.status &lt; 400){
+                        var dataCollected = JSON.parse(req.responseText);
+                        console.log(dataCollected);
+                    }
+                        
+                    else {
+                        console.log("Error in network request: " + req.statusText);
+                    }
+                    
+                ;})
+
+        req.send(null);
+    </pre>
+    
+    <h3>The Fish and Wildlife Service Return:</h3>
+        
+    <pre>
+16:Object
+    AccInfo:false
+	Address:"367 Highway 165, Eufaula, Al 36027-8187"
+	AltSAMMS:10017855
+	AltType:"Levee"
+	Area:86170
+	AvgGrade:0.4
+	AvgSlope:1.3
+	BeginMP:0
+	CRVTrail:0
+	County:"Stewart"
+	CycleID:1
+	DMTrail:0
+	Datafile:"EUFU_TRAIL.cor"
+	District:2
+	ElemID:"43560-T300-003"
+	EndMP:0
+	FCITrail:0
+	GEOM:"LINESTRING (-85.062354876999962 32.001591663000056, -85.051011805999963 31.994342092000068)"
+	GPSDate:"2006-06-29 00:00:00.0"
+	InfoType:""
+	LastUpdatedDate:"2017-04-25"
+	ManageUse:"HIKE"
+	Name:"Bradley Dike Trail"
+	OrgCode:43560
+	Phone:"334-687-4065"
+	Region:4
+	SAMMSNo:10017879
+	SecLength:1.3565
+	SecNo:3
+	ShapeLength:""
+	State:"GA"
+	Station:"Eufaula NWR"
+	Surface:"Admin Road"
+	SurfaceFirm:"Firm"
+	TrailClass:"TC3"
+	TrailCondition:""
+	TrailDescription:"From Bradley Unit Parking (Rte 906) to End of Loop"
+	TrailDesignation:"STD"
+	TrailFWSID:1736
+	TrailFrom:"Sec 003"
+	TrailLength:""
+	TrailNo:"T300"
+	TrailTo:"End of Loop"
+	Width:144
+    </pre>
+    
+    <p>The FWS may not have as many total attributes, but at least they seem to be more complete.</p>
+    
+    
+    
+    </div>
+   <!-- <script src='RIDB_buttonControls.js'></script> -->
+
+</body>
+</html>
