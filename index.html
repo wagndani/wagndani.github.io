@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang = "en-us">
 <head>
@@ -333,4 +334,341 @@ agencies.send(null);
     <!--<script>src='RIDB_buttonControls.js'</script>-->
     <!--<script src="RIDBjavaScript.js"></script> -->
 </body>
+=======
+<!DOCTYPE html>
+<html lang = "en-us">
+<head>
+<title>The RIDB: A 'How-To'</title>
+<meta charset="utf-8" >
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
+<link rel="stylesheet" href="APIhowtoStyles.css" >
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    
+</head>
+    
+<body>
+    <h1>
+        <div class="container">
+            <div class="page-header text-center">
+            <div class="row">
+                    <div class="col-md-2">
+                    <blockquote>Conservation means the wise use of the earth and its resources for the lasting good.
+                    <footer>Gifford Pinchot</footer></blockquote>
+                    </div>
+            
+                   <div class="col-md-8"><span class="titlePage">The Recreation Information Database - RIDB</br>
+                   An API Tutorial</span>
+                    </div>
+            
+                    <div class="col-md-2">
+                        <blockquote>Between every two pine trees there is a door leading to a new way of life.<footer>John Muir</footer></blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </h1>
+    
+    <div class="container">
+
+        <h2>The Recreation Information Database - RIDB</h2>
+            <p>The Recreation Information Database (RIDB) provides users with a vast resource of information regarding recreational opportunities, across numerous Federal land management agencies, as well as state parks.  Information is able to be queried by state, activity, management agency.</p>
+    
+            <p><a href="https://ridb.recreation.gov">RIBD.RECREATION.GOV</a> has provided a RESTful API to allow the general public the opportunity to access this nationwide wealth of information.  The possibilities are seemingly endless.  A rental cabin agency in the Smoky Mountains can use this information within their own websites to provide potential vacation renters with nearby site seeing opportunities.  A bait shop could identify nearby public fishing locations.  Outdoor adventure suppliers can provide potential clients with information on local camping, hiking or canoeing opportunities.  A local Tourism Development Council can use the information in efforts to attract more visitors to their cities.  A travel guide can use the data to find handicap accessible campsites for disabled clients, for find all the historical tours that leave at specific times or date ranges.  Mountain bike groups can determine which trails allow mountain bike usage, as well as the width, length, and surface type of those trails.  Without a question, the enterprising developer can do a great deal with this data.</p>
+   
+        <h2>RESTful API</h2>
+            <p>A RESTful API is an application Program Interface (API) that uses representational state transfer (REST) protocols to utilize HTML requests to GET, PUT, POST, and DELETE data.  GET requests are generally responded in a Javascript Object Notation (JSON) format or extensible Markup Language (XML).  These requests can then be process to tailor to a specific need.  In short, RESTFUL APIs allow programmers to retrieve and process information, from other servers, to use and display within their own websites or applications. </p>
+    
+        <h2>Let's get started!</h2>
+            <p><a href="http://usda.github.io/RIDB/">RIDB</a> provides a pretty solid base for getting started with their API. Information about endpoints, obtaining API keys for authentication, and information about available data formats are prominently displayed. Just about any API out there will require users to sign up to obtain a 'key' to access the database, the RIDB is no different.  Keys are free, and immediately available by clicking the <a href="https://ridb.recreation.gov/?action=register">RIDB key link.</a>  From there it is a simple form: name, email, username and password and you get a key id to pass to the endpoint API calls. <img src="completedImages/testingFillForm.png" alt="API SIgn Up Form" title="No robots allowed.  Small woodland creatures, OK." style='display:block; margin-left: auto; margin-right:auto'></p>
+        
+        <h2> You've got the key, now what...</h2>    
+            <p>If we look at the <a href="http://usda.github.io/RIDB/">RIDB Documentation</a> a little further down the page we find the first provided example of the type of request we can initiate to obtain the list of <a href="http://usda.github.io/RIDB/#Organizations">Organizations</a> who participate in the RIDB. </p>
+            
+            <p>The documentation tells us in order to pull the list of organizations, we issue the request: <code>GET https://ridb.recreation.gov/api/v1/organizations/</code>.  </br>
+            Of course we will need to include our API key, and the basic template then becomes: 
+            <code>GET https://ridb.recreation.gov/api/v1/organizations/?apikey=INSERT_YOUR_KEY</code> </p>
+
+        <h2>Query Participating Organizations</h2>
+            <p>When beginning a new project, it is always a good idea to start at the top, in this case that means learning how to work with an Organization query.  Looking at documentation for an <a href="http://usda.github.io/RIDB/#Organizations">organzation request</a>, we can string multiple parameters together in the query portion of our GET request by using an <code>&amp;</code>.  We can query based the organization name or abbreviation, we can limit the number of records to return, or set an 'offset' to start the record return a specific 'depth' into the data array.  Looking at the <a href="http://usda.github.io/RIDB/#Organization">data dictionary for organizations</a> we see that an organization object returns the organization ID, name, abbreviation, URL address, URL text, a link to an image (presumably an logo) for that organization, and the organization type.  even though there is a sample return on the RIDB site, but it may be a good idea to take a look at a sample return just to make sure everything is suitable.  We will start by examining the properties of a single element to make sure the return is suitable for anything we may want to do with it.  To accomplish this task we will use the 'limit' parameter within the URL of our request block <code>'https://ridb.recreation.gov/api/v1/organizations/?limit=1&amp;apikey=' + MyapiKey</code></p>
+
+            <p>To take a peak at the properties and values of the organization object, we will run a <code>GET</code> request</p>
+
+<pre>
+var req = new XMLHttpRequest();
+
+req.open('GET', 'https://ridb.recreation.gov/api/v1/organizations/?limit=1&amp;apikey=' + MyapiKey, true);
+    req.addEventListener('load', function(){
+        if (req.status &gt;= 200 &amp;&amp; req.status &lt; 400){
+            
+            var rawData = req.responseText;
+            var dataCollected = JSON.parse(req.responseText);
+            
+            /*The JSON returned byt RIDB actually contains two oject arrays,
+            METADATA and RECDATA to access the RECDATA we will use dot notation*/
+            var agencyObjects = dataCollected.RECDATA;
+            console.log(agencyObjects);
+                        
+            /*Here we will use a 'for in' loop to show the properties within an
+            agency object and show what their corrasponding values are in the object.
+            This will be output to the console*/
+            agencyObjects.forEach(function(element){
+                for (prop in element){
+                    console.log(prop + ": " + element[prop]);
+                }
+            })
+        }
+        else {
+            console.log("Error in network request: " + req.statusText);
+        }
+    })
+    
+req.send(null);
+</pre>
+
+<p>The result output to the console will be:</p>
+
+<pre>
+OrgID: 206
+OrgImageURL: 
+OrgURLText: American Battle Monuments Commission
+OrgURLAddress: http://www.abmc.gov/home.php
+OrgType: Presidential Commission
+OrgAbbrevName: ABMC
+OrgName: American Battle Monuments Commission
+OrgJurisdictionType: 
+OrgParentID: 0
+LastUpdatedDate: 2007-03-18
+</pre>
+
+<p>The properties of this organization appear to be fairly well populated, but is missing data for an image URL and jurisdiction.  It would most likely be safe to assume all objects with be have a OrgName, OrgType, and maybe an URL.</p>
+
+<p>It may be nice to list the agencies who provide data to this API as a special thank you for giving me something interesting to work on, here we go!  We will generate a table of the organization name (OrgName), organization type (OrgType), and include web link for the agency using the return from our API request.</p>
+
+<pre>
+var agencies = new XMLHttpRequest();
+
+agencies.open('GET', 'https://ridb.recreation.gov/api/v1/organizations/?&amp;apikey=' + MyapiKey, true);
+    agencies.addEventListener('load', function(){
+        if (agencies.status &gt;= 200 &amp;&amp; agencies.status &lt; 400){
+            
+            var rawData = agencies.responseText;
+            var dataCollected = JSON.parse(agencies.responseText);
+            var agencyObjects = dataCollected.RECDATA;
+            
+            /*Build a table with the data*/
+                var tableDiv = document.createElement('div');
+                var tableTop = document.createElement('table');
+                var tableTitle = document.createElement('h3');
+                tableTitle.textContent = 'Agencies participating in the RIDB';
+                tableDiv.appendChild(tableTitle);
+            
+                /*add hoverable Bootstrap table class*/
+                tableDiv.className = 'container';
+                tableTop.className = 'table table-striped table-hover table-sm';
+            
+                tableDiv.appendChild(tableTop);
+            
+                var tableHead = document.createElement('thead');
+                tableHead.className = 'thead-inverse';
+                tableTop.appendChild(tableHead);
+                
+                var topRow = document.createElement('tr');
+                tableHead.appendChild(topRow);
+            
+                var nameHeader = document.createElement('th');
+                nameHeader.textContent = "Organization";
+                topRow.appendChild(nameHeader);
+                
+                var typeHeader = document.createElement('th');
+                typeHeader.textContent = "Type";
+                topRow.appendChild(typeHeader);
+            
+                var tableBody = document.createElement('tbody');
+                tableTop.appendChild(tableBody);
+            
+            /*Populate the table*/ 
+            agencyObjects.forEach(function(element){
+            
+                /*in testing I noticed two place holders "FEDERAL" and "STATE PARKS".
+                we will remove these from the list */
+                if(element.OrgName != "FEDERAL" &amp;&amp; element.OrgName != "STATE PARKS") {
+                    var nextRow = document.createElement('tr');
+                    var agencyName = document.createElement('td');
+                    var weblink = document.createElement('a');
+                    
+                    /*populate URL to agency if available*/
+                    if(element.OrgURLAddress != ''){
+                        weblink.href = element.OrgURLAddress;
+                    }
+                    
+                    else{
+                        /*point to nothing*/
+                        weblink.href = '#';
+                    }                   
+                    weblink.textContent = element.OrgName;
+                    agencyName.appendChild(weblink);
+                    nextRow.appendChild(agencyName);
+                    
+                    var agencyType = document.createElement('td');
+                    agencyType.textContent = element.OrgType;
+                    nextRow.appendChild(agencyType);
+                    
+                    tableBody.appendChild(nextRow);
+                }
+                /*attach the table to the document*/
+                document.body.appendChild(tableDiv);
+                
+            })
+        }
+        
+        else {
+            console.log("Error in network request: " + req.statusText);
+        }
+    })
+    
+agencies.send(null);
+</pre>
+
+<p>It may look like a lot of code, but the result is relatively nice!</p>
+
+<hr>
+
+<div class="container">
+   <h3>Agencies participating in the RIDB</h3>
+    <table class="table table-striped table-hover table-sm">
+        <thead class="thead-inverse">
+            <tr>
+                <th>Organization</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            <tr>
+                <td><a href="http://www.abmc.gov/home.php">American Battle Monuments Commission</a></td>
+                <td>Presidential Commission</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.moneyfactory.gov/">Bureau of Engraving and Printing</a></td>
+                <td>Federal</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.blm.gov">Bureau of Land Management</a></td>
+                <td>Department of the Interior</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.usbr.gov">Bureau of Reclamation</a></td>
+                <td>Department of the Interior</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.usda.gov">Department of Agriculture</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="#">Department of Commerce</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="#">Department of Defense</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="http://www.doi.gov/museum/interiormuseum/mission.htm">Department of the Interior</a></td>
+                <td>Department of the Interior</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.treasury.gov/">Department of the Treasury</a></td>
+                <td>Federal</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.dot.gov">Department of Transportation</a></td>
+                <td>Department of Transportation</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.fws.gov">Fish and Wildlife Service</a></td>
+                <td>Department of the Interior</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.historichotels.org/">Historic Hotels of America</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="#">Maryland</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="http://www.archives.gov">National Archives and Records Administration</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="http://www.nps.gov/nhl/">National Historic Landmark</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="http://www.noaa.gov">National Oceanic and Atmospheric Administration</a></td>
+                <td>Department of Commerce</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.nps.gov">National Park Service</a></td>
+                <td>Department of the Interior</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.cr.nps.gov/nr/">National Register of Historic Places</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="#">ReserveAmerica</a></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="http://www.si.edu">Smithsonian Institution</a></td>
+                <td>Smithsonian Institution</td>
+            </tr>
+            <tr>
+                <td><a href="http://affiliations.si.edu/">Smithsonian Institution Affiliations Program</a></td>
+                <td>Smithsonian Institution</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.tva.gov">Tennessee Valley Authority</a></td>
+                <td>Tennessee Valley Authority</td>
+            </tr>
+            <tr>
+                <td><a href="#">Texas</a></td>
+                <td></td>
+            </tr><tr>
+            <td><a href="http://www.af.mil/">US Air Force</a></td>
+            <td>Federal</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.usace.army.mil">US Army Corps of Engineers</a></td>
+                <td>Department of Defense</td>
+            </tr>
+            <tr>
+                <td><a href="http://www.fs.fed.us">USDA Forest Service</a></td>
+                <td>Department of Agriculture</td>
+            </tr>
+            <tr>
+                <td><a href="#">Utah</a></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<p>From this point forward, we are going to run through some hypothetical scenarios and see what kinds of problems we can solve from the use of the data obtainable through RIDB</p>
+
+            <button id="indexToNextPage"><a href="page2.html">Continue &gt; &gt; &gt;</a></button>
+            </br>
+            </br>
+            </br>
+    </div>
+    
+    <!--<script>src='RIDB_buttonControls.js'</script>-->
+    <!--<script src="RIDBjavaScript.js"></script> -->
+</body>
+>>>>>>> origin/master
 </html>
