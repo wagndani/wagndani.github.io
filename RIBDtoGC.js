@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 //Load Google Chart Packages
 google.charts.load('current', {'packages':['corechart']});
 
@@ -64,7 +63,7 @@ function advancedDayResPieChart() {
         chart.draw(data, options);
 }   
 
-=======
+
 //Load Google Chart Packages
 google.charts.load('current', {'packages':['corechart']});
 
@@ -130,4 +129,4 @@ function advancedDayResPieChart() {
         chart.draw(data, options);
 }   
 
->>>>>>> origin/master
+
