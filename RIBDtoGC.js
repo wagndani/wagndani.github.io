@@ -53,8 +53,8 @@ function advancedDayResPieChart() {
     // Set chart options
     var options = {
         'title':'Comparison of Days of Advanced Reservation by Site Type',
-        'width':600,
-        'height':300,
+        'width':800,
+        'height':600,
         'backgroundColor':'#ece9e2',
     };
 
