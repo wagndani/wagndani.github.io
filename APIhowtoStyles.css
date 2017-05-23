@@ -1,5 +1,4 @@
 span.titlePage {
-    
     text-align: center;
     display: block;
     margin-left: auto;
@@ -7,7 +6,7 @@ span.titlePage {
     font-size-adjust: auto;
 }
 
-div.titlePageBlock {
+div.page-header {
     background-image: url(completedImages/banner.jpg);
     background-repeat: no-repeat;
     background-size: cover;
@@ -17,4 +16,10 @@ div.titlePageBlock {
     margin: auto;
     background-color: aliceblue;
     opacity: 0.75;
+}
+
+.recAreaOuput {
+    margin-top: 10px;
+    border: 1px solid;
+    padding: 5px;
 }
