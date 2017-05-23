@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang = "en-us">
+<head>
+<title>The RIDB: A 'How-To'</title>
+<meta charset="utf-8" >
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--Load the AJAX API-->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<link rel="stylesheet" href="APIhowtoStyles.css" >
+
+</head>
+
+<body>
+        <div class="container-fluid page-header text-center">
+            <div class="row">
+                    <div class="col-md-2">
+                    <blockquote>When we see land as a community to which we belong, we may begin to use it with love and respect.
+                    <footer>Aldo Leopold</footer></blockquote>
+                    </div>
+
+                   <div class="col-md-8"><span class="titlePage"><h1>The Recreation Information Database - RIDB</br>
+                   An API Tutorial</h1></span>
+                    </div>
+
+                    <div class="col-md-2">
+                        <blockquote>Study nature, love nature, stay close to nature. It will never fail you.<footer>Frank Lloyd Wright</footer></blockquote>
+                    </div>
+                </div>
+            
+        </div>
+
+    <div class="container">
+        <h2>Google Chart API</h2>
+        <p>Perhaps, we want to visualize the site type summary statistics we generated for Cape Perpetua on the previous page.  Well, Google provides an easy and economic (free!!!) answer.  <a href="https://developers.google.com/chart/">Google Charts</a> provides a robust set of charting tools that are customizable, interactive, easy to use, and free!!.</p>
+        
+        <p>In your HTML file you will need to include <code><!--Load the AJAX API-->
+        &lt;script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"&gt;&lt;/script&lt;</code> within your <code>&lt;head&gt;</code> tag.  Make sure this &gt;scirpt&lt; tag comes before the &gt;scirpt&lt; tag containing the link to your .js file that uses the Google Chart API.  In you .js file insert the line <code>google.charts.load('current', {'packages':['corechart']});</code> near the top of your javascript code.  This line will load the package you need for your chart and is editable for various chart packages.  More information about Google Chart packages can be found in the documentation, <a href="https://google-developers.appspot.com/chart/interactive/docs/basic_load_libs">here</a>. The Google documentation states to include the line <code>       google.charts.setOnLoadCallback(advancedDayResPieChart);</code> along with the line that loads the packages.  In my testing, I had to include in within the <code>if</code> statement of the <code>addEventListener()</code> function.</p>
+        
+        <p>The following will produce a column chart displaying the average number of days in advance a particular site type was reserved durning 2015</p>
+<pre>
+google.charts.load('current', {'packages':['corechart']});
+
+
+var reservations = new XMLHttpRequest();
+
+reservations.open('GET', 'https://ridb.recreation.gov/api/v1/historicalreservations/?query=cape perpetua' + '&amp;orderdatemin=2015-01-01&amp;' + 'orderdatemax=2016-12-31&amp;' + MyapiKey, true);
+reservations.addEventListener('load', function () {
+        
+    if (reservations.status &gt;= 200 &amp;&amp; reservations.status &lt; 400) {
+        var dataCollected = JSON.parse(reservations.responseText);
+        var reservationObjects = dataCollected.RECDATA;
+        var sites = new Set();
+        var summaryResults = [];
+        
+        reservationObjects.forEach (function (element) {
+            sites.add(element.SiteType);
+            })
+        
+        sites.forEach(function (site){
+
+            var tempHold = reservationObjects.filter( function(reservation){
+                return reservation.SiteType === site;
+            })
+            
+            var sumObject = tempHold.reduce( function (testing, tempElement){
+                testing.totalday += calculateDays(tempElement);
+                testing.advanceDays += advancedNotice(tempElement);
+                testing.occurance++;
+                testing.averagestay = testing.totalday / testing.occurance;
+                testing.averageAdvance = testing.advanceDays / testing.occurance;
+                return testing; 
+                
+            }, new siteObjects(site))
+            
+            summaryResults.push(sumObject);
+            }) 
+        
+        /*****NEW CODE STARTS HERE *********/
+        
+        /*The input data for a Google chart must be an array of arrays
+        * we will create an array to hold our array of data to display*/
+        var reservationDataArray =[];
+        
+        /*Create array of unique site types, and how many days in advanced
+        *those sites were reserved, then push to reservationDataArray
+        *to create an array of arrays*/
+        
+        summaryResults.forEach(function(element){
+            var rowArray =[];
+            rowArray.push(element.siteType + '\n(' + element.occurance + ' reservations)');
+            rowArray.push(element.averageAdvance);
+            reservationDataArray.push(rowArray);
+        })
+        /*basic body and structure of code direct from Google's
+        *Pie Chart example.  Modified to meet our needs*/
+        function advancedDayResPieChart() {
+
+            // Create the data table.
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Site Type');
+            data.addColumn('number', 'Days Reservation Made in Advance');
+            data.addRows(reservationDataArray);
+
+            // Set chart options - This can be thought of as CSS setup
+            var options = {
+                'title':'Comparison of Days of Advanced Reservation by Site Type',
+                'width':600,
+                'height':300,
+                'backgroundColor':'#ece9e2',
+            };
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.ColumnChart(document.getElementById('ColumnChartHere'));
+            chart.draw(data, options);
+        }   
+    }
+    
+    else {
+        console.log("Error in network request: " + reservations.status);
+    }
+});
+
+reservations.send(null);</pre>
+        <hr>
+        <h3>The Result</h3>
+        <div id="ColumnChartHere"></div>
+        <p>Hover your mouse around the chart and you will see it is interactive.  A very nice touch.  Let's see what else we can do...</p>
+       <iframe width="100%" height="300" src="//jsfiddle.net/avbsh9td/embedded/js,html,result/dark/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+        
+               
+    </div>
+   <!-- <script src='RIDB_buttonControls.js'></script> -->
+    <script src="RIBDtoGC.js"></script>
+</body>
+</html>
