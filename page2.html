@@ -40,7 +40,7 @@
 
         <p>North Georgia specifically.  One of my favorite places to go within a few hours drive of home is the mountains and hills of northern Georgia in the fall.  There is a popular pumpkin patch just outside of Dawsonville, GA we have made a tradition to visit annually.  So, lets see what we can find nearby...</p>
 
-        <p>I'll start by entering Dawonsonville, GA into <a href="https://www.google.com/maps/place/Dawsonville,+GA+30534/@34.4301817,-84.1290074,14z/data=!3m1!4b1!4m5!3m4!1s0x885f7cdcdd2ba817:0x96cb0430ad709640!8m2!3d34.4210713!4d-84.1192245">Google Maps.</a>  If I take a look at the pane that pops up on the left side of the page, and the address bar, I have information for the zip code, latitude and longitude for Dawsonville, GA.  Now, looking back at the documentation for the RIDB under <a href="http://usda.github.io/RIDB/#Get All Recreation Areas">"Get All Recreation Areas"</a> we find a listing of available "URL Parameters".  We can use these parameters to filter through all the records in the RIDB to those which are specific to our needs.  If I were interested in retrieving records near a specific location, I can see that the "latitude", "longitude", and "radius" parameters will fit the purpose. </p>
+        <p>I'll start by entering Dawonsonville, GA into <a href="https://www.google.com/maps/place/Dawsonville,+GA+30534/@34.4301817,-84.1290074,14z/data=!3m1!4b1!4m5!3m4!1s0x885f7cdcdd2ba817:0x96cb0430ad709640!8m2!3d34.4210713!4d-84.1192245">Google Maps.</a>  If I take a look at the pane that pops up on the left side of the page, and the address bar, I have information for the zip code, latitude, and longitude for Dawsonville, GA.  Now, looking back at the documentation in the RIDB under <a href="http://usda.github.io/RIDB/#Get All Recreation Areas">"Get All Recreation Areas"</a> we find a listing of available "URL Parameters".  We can use these parameters to filter through all the records in the RIDB to those which are specific to our needs.  If I were interested in retrieving records near a specific location, I can see that the "latitude", "longitude", and "radius" parameters will fit the purpose. </p>
 
         <P>I'll start by creating an object populated with the data I found on Google Maps for Dawsonville, and a variable to hold the distance (miles) I am willing to search: <pre>
         var Dawsonville = {
@@ -53,14 +53,14 @@
 
         var distance = 50;          /*50 miles being the max distance I can travel without complaints from the back seat*/</pre></p>
 
-        <p>Now, modify the request from the organization pull from the previous page, using the latitude, longitude, and radius parameters by appending them into the URL with the ampersand (&amp;):<pre>
+        <p>Now, modify the request we made on the previous page to create a recreation area request, using the latitude, longitude, and radius parameters by appending them into the URL with the ampersand (&amp;):<pre>
         req.open('GET', 'https://ridb.recreation.gov/api/v1/recareas/?latitude=' + Dawsonville.latitude + "&longitude=" + Dawsonville.longitude + "&radius=" + distance + "&" + MyapiKey , true);</pre></p>
 
-        <p>Looking through the return, You may notice a few attributes of particular interest: <code>RecAreaName:</code>, <code>RecAreDescription:</code>, <code>RecAreaDirections:</code>, <code>keywords:</code>, and <code>RecAreaPhone:</code> all look to be good resource information.  Lets do something with it.</p>
+        <p>Looking through the return, you may notice a few attributes of particular interest: <code>RecAreaName:</code>, <code>RecAreDescription:</code>, <code>RecAreaDirections:</code>, <code>keywords:</code>, and <code>RecAreaPhone:</code> all look to be good resource information.  Lets do something with it.</p>
 
         <h3>Adding the information to a website</h3>
 
-        <p>We are now going to generate multiple 'blocks' of recreation area data, one for each recreation are within 50 miles of Dawsonville, Georgia.  Each 'block' will contain the name of a recreation area as a header, an about section, directions to the area, and contact information.  Here we go.</p>
+        <p>We are now going to generate multiple 'blocks' of recreation area data, one for each recreation area within 50 miles of Dawsonville, Georgia.  Each 'block' will contain the name of a recreation area as a header, an about section, directions to the area, and contact information.  Here we go.</p>
 
     <pre>
     var Dawsonville = {
@@ -249,8 +249,8 @@ var distance = 50;
 
 <div class="container">
     
-    <h2>One more trick</h2>
-    <p>It should now be pretty easy to see how this information can be modified, styled and added to any page you wished.  Maybe for a vacation journal or maybe to highlight recreational opportunities near the cabin you are trying to rent out.</p>
+    <h2>One More Trick</h2>
+    <p>It should now be pretty easy to see how this information can be modified, styled and added to any page you wish.  Maybe for a vacation journal or maybe to highlight recreational opportunities near the cabin you are trying to rent out.</p>
     
     <p>However, there is one more piece we can add to this to really make it interesting.  If we look further down the RIDB documentation, we see a request example for <a href="http://usda.github.io/RIDB/#Recreation Area Media">Recreation Area Media</a>.  This request returns URL endpoints for media associated with a particular recreation area, when given the recreation area unique ID number.  It just so happens that our recreation areas we built the above 'block' from, have these unique recreation area ID within their attributes. Let's modify our code to include any available pictures of the rec areas, by nesting another request into our code.</p>
     
@@ -341,7 +341,7 @@ var distance = 50;
         </div>
     <hr>
     
-    <p>In the next section we will the data treasure trove of historical reservation data (sounds exciting!)</p>
+    <p>In the next section we will exlore the data treasure trove of historical reservation data (sounds exciting!)</p>
      <button id="pg2toIndex"><a href="index.html">&lt; &lt; &lt; Back</a></button>
      <button id="pg2toPg3"><a href="page3.html">Continue &gt; &gt; &gt;</a></button>
     </div>
